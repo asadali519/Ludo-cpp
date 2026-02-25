@@ -20,6 +20,7 @@ struct Player {
 void printGrid();
 int rollDice();
 void initializePlayers(Player* players);
+void takeTurn(Player& player);
 
 int main()  {
     srand(time(0));
@@ -29,6 +30,10 @@ int main()  {
 
     for (int i = 0; i < 4; i++) {
         cout << players[i].name << ", " << players[i].color << endl;
+    }
+
+    for (int i = 0; i < 4; i++) {
+        takeTurn(players[i]);
     }
 
     cout << "Dice Roll: " << rollDice() << endl;
@@ -76,4 +81,26 @@ void initializePlayers(Player* players)  {
                 players[i].pieces[j].position = -1;
             }
     }
+}
+
+void takeTurn(Player& player)   {
+
+    int roll = rollDice();
+    cout << player.name << " rolled: " << roll << endl;
+
+    //if all at home
+    bool allAtHome = true;
+    for (int i = 0; i < 4; i++) {
+        if (player.pieces[i].position != -1)    {
+            allAtHome = false;
+            break;
+        }
+    }
+
+    if (allAtHome && roll != 6)    {
+        cout << player.name << " cannot move. Turn Skipped" << endl;
+        return;
+    }
+
+    cout << player.name << " can move!" << endl;
 }
