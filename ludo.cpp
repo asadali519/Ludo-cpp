@@ -3,8 +3,44 @@ using namespace std;
 
 void printGrid();
 
+//piece struct
+struct Piece {
+    int position;
+    
+};
+
+//player struct
+struct Player {
+    string name;
+    char color;
+    Piece* pieces;  // a Piece type pointer to point to my pieces
+};
+
 int main()  {
-    printGrid();
+    Piece p11;
+    p11.position = -1;
+
+    cout << "Piece Position: " << p11.position << endl;
+
+    Player p1;
+    p1.name = "Asad Ali";
+    p1.color = 'R';
+    p1.pieces = new Piece[4];
+
+    //initialize at home (-1)
+    for (int i = 0; i < 4; i++) {
+        p1.pieces[i].position = -1;
+    }
+
+    //printing
+    cout << "Player 1: " << p1.name << endl;
+    for (int i = 0; i < 4;i++)  {
+        cout << "Piece " << i + 1 << " Position: " << p1.pieces[i].position << endl; 
+    }
+
+    delete[] p1.pieces;
+
+    //printGrid();
 
     return 0;
 }
