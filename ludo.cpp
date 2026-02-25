@@ -3,13 +3,11 @@
 # include <cstdlib>
 using namespace std;
 
-void printGrid();
-int rollDice();
+
 
 //piece struct
 struct Piece {
     int position;
-    
 };
 
 //player struct
@@ -19,35 +17,26 @@ struct Player {
     Piece* pieces;  // a Piece type pointer to point to my pieces
 };
 
+void printGrid();
+int rollDice();
+void initializePlayers(Player* players);
+
 int main()  {
     srand(time(0));
 
-    cout << "Dice Roll: " << rollDice() << endl;
-    cout << "Dice Roll: " << rollDice() << endl;
-    cout << "Dice Roll: " << rollDice() << endl;
+    Player* players = new Player[4];
+    initializePlayers(players);
 
-    Piece p11;
-    p11.position = -1;
-
-    cout << "Piece Position: " << p11.position << endl;
-
-    Player p1;
-    p1.name = "Asad Ali";
-    p1.color = 'R';
-    p1.pieces = new Piece[4];
-
-    //initialize at home (-1)
     for (int i = 0; i < 4; i++) {
-        p1.pieces[i].position = -1;
+        cout << players[i].name << ", " << players[i].color << endl;
     }
 
-    //printing
-    cout << "Player 1: " << p1.name << endl;
-    for (int i = 0; i < 4;i++)  {
-        cout << "Piece " << i + 1 << " Position: " << p1.pieces[i].position << endl; 
-    }
+    cout << "Dice Roll: " << rollDice() << endl;
+    cout << "Dice Roll: " << rollDice() << endl;
+    cout << "Dice Roll: " << rollDice() << endl;
 
-    delete[] p1.pieces;
+    
+    delete[] players;
 
     //printGrid();
 
@@ -71,4 +60,20 @@ void printGrid() {
 
 int rollDice()  {
     return rand() % 6 + 1;
+}
+
+void initializePlayers(Player* players)  {
+    
+    string names[] = {"Player 1", "Player 2", "Player 3", "Player 4"};
+    char color[] = {'R', 'G', 'Y', 'B'};;
+
+    for (int i = 0; i < 4; i++) {
+        players[i].name = names[i];
+        players[i].color = color[i];
+
+        players[i].pieces = new Piece[4];
+            for (int j = 0; j < 4; j++) {
+                players[i].pieces[j].position = -1;
+            }
+    }
 }
