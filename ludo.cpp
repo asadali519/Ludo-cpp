@@ -3,8 +3,6 @@
 # include <cstdlib>
 using namespace std;
 
-
-
 //piece struct
 struct Piece {
     int position;
@@ -24,21 +22,25 @@ void takeTurn(Player& player);
 
 int main()  {
     srand(time(0));
+    int move;
 
     Player* players = new Player[4];
     initializePlayers(players);
 
+    int round = 1;
     bool gameOver = false;
     while (!gameOver)    {
         for (int i = 0; i < 4; i++) {
             takeTurn(players[i]);
         }
-        gameOver = true;
+        round++;
+
+        if (round > 5) gameOver = true;
     }
 
-    for (int i = 0; i < 4; i++) {
-        cout << players[i].name << ", " << players[i].color << endl;
-    }
+    // for (int i = 0; i < 4; i++) {
+    //     cout << players[i].name << ", " << players[i].color << endl;
+    // }
     
     delete[] players;
 
@@ -102,4 +104,26 @@ void takeTurn(Player& player)   {
     }
 
     cout << player.name << " can move!" << endl;
+
+    cout << player.name << "'s Pieces: " << endl;
+        for (int j = 0; j < 4; j++) {
+    cout << "Piece " << j + 1 << ": ";
+    if (player.pieces[j].position == -1) cout << "Home" << endl;
+    else cout << "Position " << player.pieces[j].position << endl;
+        }
+        int choice;
+        cout << "Pick a piece to move (1-4): ";
+        cin >> choice;
+
+    choice--; // convert from 1-4 to 0-3 index
+
+    if (player.pieces[choice].position == -1 && roll == 6) {
+        player.pieces[choice].position = 0;
+        cout << "Piece " << choice+1 << " moved out of home!" << endl;
+    } else if (player.pieces[choice].position != -1) {
+        player.pieces[choice].position += roll;
+        cout << "Piece " << choice+1 << " moved to position " << player.pieces[choice].position << endl;
+    } else {
+        cout << "Invalid move! Piece is at home and you need a 6 to move out." << endl;
+    }
 }
