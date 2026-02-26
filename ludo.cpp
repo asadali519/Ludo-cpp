@@ -28,18 +28,17 @@ int main()  {
     Player* players = new Player[4];
     initializePlayers(players);
 
+    bool gameOver = false;
+    while (!gameOver)    {
+        for (int i = 0; i < 4; i++) {
+            takeTurn(players[i]);
+        }
+        gameOver = true;
+    }
+
     for (int i = 0; i < 4; i++) {
         cout << players[i].name << ", " << players[i].color << endl;
     }
-
-    for (int i = 0; i < 4; i++) {
-        takeTurn(players[i]);
-    }
-
-    cout << "Dice Roll: " << rollDice() << endl;
-    cout << "Dice Roll: " << rollDice() << endl;
-    cout << "Dice Roll: " << rollDice() << endl;
-
     
     delete[] players;
 
