@@ -1,5 +1,5 @@
 // =============================================================
-// Ludo Board Game — SFML 2.x
+// Ludo Board Game — SFML 3.x
 // Single-file implementation: no STL containers, no structs/classes,
 // all state in global C-style arrays, all logic in free functions.
 // =============================================================
@@ -754,8 +754,8 @@ void drawCell(sf::RenderWindow &w, int row, int col,
               sf::Color outline = sf::Color(160, 160, 160))
 {
     sf::RectangleShape rect(sf::Vector2f(CELL_SIZE - 1.f, CELL_SIZE - 1.f));
-    rect.setPosition(GRID_OFFSET_X + col * CELL_SIZE + 0.5f,
-                     GRID_OFFSET_Y + row * CELL_SIZE + 0.5f);
+    rect.setPosition({GRID_OFFSET_X + col * CELL_SIZE + 0.5f,
+                      GRID_OFFSET_Y + row * CELL_SIZE + 0.5f});
     rect.setFillColor(fill);
     rect.setOutlineThickness(1.f);
     rect.setOutlineColor(outline);
@@ -768,7 +768,7 @@ void drawDot(sf::RenderWindow &w, float x, float y, float size, float dx, float 
     float r = size * 0.09f;
     sf::CircleShape c(r);
     c.setFillColor(sf::Color(30, 30, 30));
-    c.setPosition(x + dx * size - r, y + dy * size - r);
+    c.setPosition({x + dx * size - r, y + dy * size - r});
     w.draw(c);
 }
 
@@ -777,7 +777,7 @@ void drawDice(sf::RenderWindow &w, int face, float x, float y)
 {
     const float S = 60.f;
     sf::RectangleShape box(sf::Vector2f(S, S));
-    box.setPosition(x, y);
+    box.setPosition({x, y});
     box.setFillColor(sf::Color::White);
     box.setOutlineThickness(2.f);
     box.setOutlineColor(sf::Color(60, 60, 60));
@@ -900,8 +900,8 @@ void drawBoard(sf::RenderWindow &w)
     // Centre white circle labelled "HOME"
     sf::CircleShape homeCircle(CELL_SIZE * 0.9f);
     homeCircle.setFillColor(sf::Color(255, 255, 255, 220));
-    homeCircle.setOrigin(CELL_SIZE * 0.9f, CELL_SIZE * 0.9f);
-    homeCircle.setPosition(mx, my);
+    homeCircle.setOrigin({CELL_SIZE * 0.9f, CELL_SIZE * 0.9f});
+    homeCircle.setPosition({mx, my});
     w.draw(homeCircle);
 
     // ── Step 6: Star symbols on star cells ───────────────────
@@ -909,9 +909,9 @@ void drawBoard(sf::RenderWindow &w)
     for (int i = 0; i < 4; i++) {
         sf::CircleShape star(CELL_SIZE * 0.22f, 5);
         star.setFillColor(sf::Color(200, 120, 0));
-        star.setOrigin(CELL_SIZE * 0.22f, CELL_SIZE * 0.22f);
+        star.setOrigin({CELL_SIZE * 0.22f, CELL_SIZE * 0.22f});
         sf::Vector2f sc = trackCentre(stars[i]);
-        star.setPosition(sc.x, sc.y);
+        star.setPosition({sc.x, sc.y});
         w.draw(star);
     }
 }
@@ -965,7 +965,7 @@ void drawPieces(sf::RenderWindow &w)
             // Shadow
             sf::CircleShape shadow(r);
             shadow.setFillColor(sf::Color(0, 0, 0, 55));
-            shadow.setPosition(centre.x - r + 2.f, centre.y - r + 2.f);
+            shadow.setPosition({centre.x - r + 2.f, centre.y - r + 2.f});
             w.draw(shadow);
 
             // Piece body
@@ -975,7 +975,7 @@ void drawPieces(sf::RenderWindow &w)
             circle.setOutlineColor(highlighted
                 ? sf::Color::White
                 : playerDark[p]);
-            circle.setPosition(centre.x - r, centre.y - r);
+            circle.setPosition({centre.x - r, centre.y - r});
             w.draw(circle);
 
             // Pulsing ring around highlighted pieces
@@ -984,7 +984,7 @@ void drawPieces(sf::RenderWindow &w)
                 ring.setFillColor(sf::Color::Transparent);
                 ring.setOutlineThickness(2.f);
                 ring.setOutlineColor(sf::Color(255, 255, 100, 200));
-                ring.setPosition(centre.x - r - 5.f, centre.y - r - 5.f);
+                ring.setPosition({centre.x - r - 5.f, centre.y - r - 5.f});
                 w.draw(ring);
             }
         }
@@ -1002,20 +1002,19 @@ void drawButton(sf::RenderWindow &w,
                 unsigned int sz = 20)
 {
     sf::RectangleShape btn(sf::Vector2f(bw, bh));
-    btn.setPosition(x, y);
+    btn.setPosition({x, y});
     btn.setFillColor(bg);
     btn.setOutlineThickness(2.f);
     btn.setOutlineColor(sf::Color::White);
     w.draw(btn);
 
-    sf::Text txt;
-    txt.setFont(font);
+    sf::Text txt(font);
     txt.setString(label);
     txt.setCharacterSize(sz);
     txt.setFillColor(sf::Color::White);
     sf::FloatRect b = txt.getLocalBounds();
-    txt.setPosition(x + (bw - b.width) * 0.5f - b.left,
-                    y + (bh - b.height) * 0.5f - b.top);
+    txt.setPosition({x + (bw - b.size.x) * 0.5f - b.position.x,
+                     y + (bh - b.size.y) * 0.5f - b.position.y});
     w.draw(txt);
 }
 
@@ -1027,14 +1026,13 @@ void drawMenu(sf::RenderWindow &w, sf::Font &font)
     w.clear(sf::Color(25, 25, 55));
 
     // Title
-    sf::Text title;
-    title.setFont(font);
+    sf::Text title(font);
     title.setString("L U D O");
     title.setCharacterSize(80);
     title.setStyle(sf::Text::Bold);
     title.setFillColor(sf::Color::White);
     sf::FloatRect tb = title.getLocalBounds();
-    title.setPosition((WIN_WIDTH - tb.width) * 0.5f - tb.left, 70.f);
+    title.setPosition({(WIN_WIDTH - tb.size.x) * 0.5f - tb.position.x, 70.f});
     w.draw(title);
 
     // Decorative coloured underline
@@ -1042,7 +1040,7 @@ void drawMenu(sf::RenderWindow &w, sf::Font &font)
     float lineW = 400.f, lineX = (WIN_WIDTH - lineW) * 0.5f;
     for (int i = 0; i < 4; i++) {
         sf::RectangleShape seg(sf::Vector2f(lineW * 0.25f - 4.f, 6.f));
-        seg.setPosition(lineX + i * lineW * 0.25f + 2.f, lineY);
+        seg.setPosition({lineX + i * lineW * 0.25f + 2.f, lineY});
         seg.setFillColor(playerColor[i]);
         w.draw(seg);
     }
@@ -1061,32 +1059,30 @@ void drawColorSelect(sf::RenderWindow &w, sf::Font &font)
 {
     w.clear(sf::Color(25, 25, 55));
 
-    sf::Text title;
-    title.setFont(font);
+    sf::Text title(font);
     title.setString("Choose Your Color");
     title.setCharacterSize(42);
     title.setFillColor(sf::Color::White);
     sf::FloatRect tb = title.getLocalBounds();
-    title.setPosition((WIN_WIDTH - tb.width) * 0.5f - tb.left, 80.f);
+    title.setPosition({(WIN_WIDTH - tb.size.x) * 0.5f - tb.position.x, 80.f});
     w.draw(title);
 
     const char *names[4] = { "Red", "Green", "Yellow", "Blue" };
     for (int i = 0; i < 4; i++) {
         float bx = 80.f + i * 185.f, by = 220.f;
         sf::RectangleShape box(sf::Vector2f(140.f, 140.f));
-        box.setPosition(bx, by);
+        box.setPosition({bx, by});
         box.setFillColor(playerColor[i]);
         box.setOutlineThickness(4.f);
         box.setOutlineColor(sf::Color::White);
         w.draw(box);
 
-        sf::Text lbl;
-        lbl.setFont(font);
+        sf::Text lbl(font);
         lbl.setString(names[i]);
         lbl.setCharacterSize(22);
         lbl.setFillColor(sf::Color::White);
         sf::FloatRect lb = lbl.getLocalBounds();
-        lbl.setPosition(bx + (140.f - lb.width) * 0.5f - lb.left, by + 150.f);
+        lbl.setPosition({bx + (140.f - lb.size.x) * 0.5f - lb.position.x, by + 150.f});
         w.draw(lbl);
     }
 
@@ -1112,7 +1108,7 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
 
     // ── Current-player colour bar ─────────────────────────────
     sf::RectangleShape bar(sf::Vector2f(WIN_WIDTH - 20.f, 42.f));
-    bar.setPosition(10.f, py);
+    bar.setPosition({10.f, py});
     bar.setFillColor(playerColor[currentPlayer]);
     bar.setOutlineThickness(2.f);
     bar.setOutlineColor(sf::Color(80, 80, 80));
@@ -1122,12 +1118,11 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
     snprintf(turnStr, sizeof(turnStr), "%s's Turn%s",
              playerName(currentPlayer),
              isAI(currentPlayer) ? "  [AI]" : "");
-    sf::Text turnTxt;
-    turnTxt.setFont(font);
+    sf::Text turnTxt(font);
     turnTxt.setString(turnStr);
     turnTxt.setCharacterSize(22);
     turnTxt.setFillColor(sf::Color::White);
-    turnTxt.setPosition(16.f, py + 10.f);
+    turnTxt.setPosition({16.f, py + 10.f});
     w.draw(turnTxt);
 
     // Finished-pieces badge per player
@@ -1135,17 +1130,16 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
         if (finishedCount[p] > 0) {
             sf::RectangleShape badge(sf::Vector2f(70.f, 18.f));
             float bx = WIN_WIDTH - 80.f - (PLAYERS - 1 - p) * 76.f;
-            badge.setPosition(bx, py + 12.f);
+            badge.setPosition({bx, py + 12.f});
             badge.setFillColor(playerColor[p]);
             w.draw(badge);
             char fc[16];
             snprintf(fc, sizeof(fc), "%s %d/4", playerName(p), finishedCount[p]);
-            sf::Text ft;
-            ft.setFont(font);
+            sf::Text ft(font);
             ft.setString(fc);
             ft.setCharacterSize(12);
             ft.setFillColor(sf::Color::White);
-            ft.setPosition(bx + 3.f, py + 14.f);
+            ft.setPosition({bx + 3.f, py + 14.f});
             w.draw(ft);
         }
     }
@@ -1159,20 +1153,18 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
         drawButton(w, 90.f, cy, 160.f, 60.f, "Roll Dice", font,
                    sf::Color(60, 140, 60));
     } else if (waitingForMove && !isAI(currentPlayer)) {
-        sf::Text hint;
-        hint.setFont(font);
+        sf::Text hint(font);
         hint.setString("Click a piece to move");
         hint.setCharacterSize(17);
         hint.setFillColor(sf::Color(40, 40, 130));
-        hint.setPosition(90.f, cy + 20.f);
+        hint.setPosition({90.f, cy + 20.f});
         w.draw(hint);
     } else if (diceAnimating || (isAI(currentPlayer))) {
-        sf::Text thinking;
-        thinking.setFont(font);
+        sf::Text thinking(font);
         thinking.setString("Thinking...");
         thinking.setCharacterSize(17);
         thinking.setFillColor(sf::Color(100, 100, 100));
-        thinking.setPosition(90.f, cy + 20.f);
+        thinking.setPosition({90.f, cy + 20.f});
         w.draw(thinking);
     }
 
@@ -1180,12 +1172,11 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
     if (consecutiveSixes > 0) {
         char sxt[24];
         snprintf(sxt, sizeof(sxt), "Sixes: %d / 3", consecutiveSixes);
-        sf::Text sx;
-        sx.setFont(font);
+        sf::Text sx(font);
         sx.setString(sxt);
         sx.setCharacterSize(15);
         sx.setFillColor(sf::Color(200, 50, 50));
-        sx.setPosition(16.f, cy + 64.f);
+        sx.setPosition({16.f, cy + 64.f});
         w.draw(sx);
     }
 
@@ -1196,30 +1187,28 @@ void drawGameScreen(sf::RenderWindow &w, sf::Font &font)
     // ── Game log ─────────────────────────────────────────────
     float logX = 265.f, logW = WIN_WIDTH - logX - 125.f;
     sf::RectangleShape logBg(sf::Vector2f(logW, 110.f));
-    logBg.setPosition(logX, cy);
+    logBg.setPosition({logX, cy});
     logBg.setFillColor(sf::Color(215, 215, 215));
     logBg.setOutlineThickness(1.f);
     logBg.setOutlineColor(sf::Color(160, 160, 160));
     w.draw(logBg);
 
-    sf::Text logHdr;
-    logHdr.setFont(font);
+    sf::Text logHdr(font);
     logHdr.setString("Game Log:");
     logHdr.setCharacterSize(13);
     logHdr.setFillColor(sf::Color(70, 70, 70));
     logHdr.setStyle(sf::Text::Bold);
-    logHdr.setPosition(logX + 4.f, cy + 2.f);
+    logHdr.setPosition({logX + 4.f, cy + 2.f});
     w.draw(logHdr);
 
     int startIdx = logCount - 5;
     if (startIdx < 0) startIdx = 0;
     for (int i = startIdx; i < logCount; i++) {
-        sf::Text lt;
-        lt.setFont(font);
+        sf::Text lt(font);
         lt.setString(gameLog[i]);
         lt.setCharacterSize(12);
         lt.setFillColor(sf::Color(40, 40, 40));
-        lt.setPosition(logX + 4.f, cy + 18.f + (float)(i - startIdx) * 18.f);
+        lt.setPosition({logX + 4.f, cy + 18.f + (float)(i - startIdx) * 18.f});
         w.draw(lt);
     }
 }
@@ -1231,32 +1220,29 @@ void drawWinScreen(sf::RenderWindow &w, sf::Font &font)
 {
     w.clear(sf::Color(15, 15, 35));
 
-    sf::Text title;
-    title.setFont(font);
+    sf::Text title(font);
     title.setString("WINNER!");
     title.setCharacterSize(80);
     title.setStyle(sf::Text::Bold);
     title.setFillColor(sf::Color::Yellow);
     sf::FloatRect tb = title.getLocalBounds();
-    title.setPosition((WIN_WIDTH - tb.width) * 0.5f - tb.left, 130.f);
+    title.setPosition({(WIN_WIDTH - tb.size.x) * 0.5f - tb.position.x, 130.f});
     w.draw(title);
 
-    sf::Text nameT;
-    nameT.setFont(font);
+    sf::Text nameT(font);
     nameT.setString(playerName(winnerID));
     nameT.setCharacterSize(60);
     nameT.setFillColor(winnerID >= 0 ? playerColor[winnerID] : sf::Color::White);
     sf::FloatRect nb = nameT.getLocalBounds();
-    nameT.setPosition((WIN_WIDTH - nb.width) * 0.5f - nb.left, 240.f);
+    nameT.setPosition({(WIN_WIDTH - nb.size.x) * 0.5f - nb.position.x, 240.f});
     w.draw(nameT);
 
-    sf::Text sub;
-    sub.setFont(font);
+    sf::Text sub(font);
     sub.setString("wins the game!");
     sub.setCharacterSize(36);
     sub.setFillColor(sf::Color(210, 210, 210));
     sf::FloatRect sb = sub.getLocalBounds();
-    sub.setPosition((WIN_WIDTH - sb.width) * 0.5f - sb.left, 320.f);
+    sub.setPosition({(WIN_WIDTH - sb.size.x) * 0.5f - sb.position.x, 320.f});
     w.draw(sub);
 
     drawButton(w, (WIN_WIDTH - 260.f) * 0.5f, 440.f, 260.f, 56.f,
@@ -1276,20 +1262,19 @@ void drawPauseScreen(sf::RenderWindow &w, sf::Font &font)
     sf::RectangleShape panel(sf::Vector2f(320.f, 290.f));
     float px = (WIN_WIDTH - 320.f) * 0.5f;
     float py2 = (WIN_HEIGHT - 290.f) * 0.5f;
-    panel.setPosition(px, py2);
+    panel.setPosition({px, py2});
     panel.setFillColor(sf::Color(45, 45, 75));
     panel.setOutlineThickness(2.f);
     panel.setOutlineColor(sf::Color::White);
     w.draw(panel);
 
-    sf::Text pt;
-    pt.setFont(font);
+    sf::Text pt(font);
     pt.setString("PAUSED");
     pt.setCharacterSize(38);
     pt.setStyle(sf::Text::Bold);
     pt.setFillColor(sf::Color::White);
     sf::FloatRect ptb = pt.getLocalBounds();
-    pt.setPosition((WIN_WIDTH - ptb.width) * 0.5f - ptb.left, py2 + 18.f);
+    pt.setPosition({(WIN_WIDTH - ptb.size.x) * 0.5f - ptb.position.x, py2 + 18.f});
     w.draw(pt);
 
     float bx = (WIN_WIDTH - 210.f) * 0.5f, by = py2 + 80.f;
@@ -1305,13 +1290,12 @@ void drawSettingsScreen(sf::RenderWindow &w, sf::Font &font)
 {
     w.clear(sf::Color(25, 25, 55));
 
-    sf::Text title;
-    title.setFont(font);
+    sf::Text title(font);
     title.setString("Settings");
     title.setCharacterSize(50);
     title.setFillColor(sf::Color::White);
     sf::FloatRect tb = title.getLocalBounds();
-    title.setPosition((WIN_WIDTH - tb.width) * 0.5f - tb.left, 100.f);
+    title.setPosition({(WIN_WIDTH - tb.size.x) * 0.5f - tb.position.x, 100.f});
     w.draw(title);
 
     char soundLabel[24];
@@ -1512,7 +1496,7 @@ int main()
 {
     srand(static_cast<unsigned>(time(nullptr)));
 
-    sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Ludo Board Game",
+    sf::RenderWindow window(sf::VideoMode({WIN_WIDTH, WIN_HEIGHT}), "Ludo Board Game",
                             sf::Style::Close | sf::Style::Titlebar);
     window.setFramerateLimit(60);
 
@@ -1530,7 +1514,7 @@ int main()
         nullptr
     };
     for (int i = 0; fontPaths[i] != nullptr; i++) {
-        if (font.loadFromFile(fontPaths[i])) { fontLoaded = true; break; }
+        if (font.openFromFile(fontPaths[i])) { fontLoaded = true; break; }
     }
     if (!fontLoaded)
         cout << "Warning: could not load a system font. Text will not display.\n";
@@ -1544,24 +1528,23 @@ int main()
         if (dt > 0.1f) dt = 0.1f;  // cap delta-time to avoid spiral of doom
 
         // ── Event handling ────────────────────────────────────
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+        while (const auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed &&
-                event.mouseButton.button == sf::Mouse::Left)
-            {
-                float mx = static_cast<float>(event.mouseButton.x);
-                float my = static_cast<float>(event.mouseButton.y);
+            if (const auto* mousePress = event->getIf<sf::Event::MouseButtonPressed>()) {
+                if (mousePress->button == sf::Mouse::Button::Left) {
+                    float mx = static_cast<float>(mousePress->position.x);
+                    float my = static_cast<float>(mousePress->position.y);
 
-                switch (currentScreen) {
-                case 0: handleMenuClick(mx, my);         break;
-                case 1: handleColorSelectClick(mx, my);  break;
-                case 2: handleGameClick(mx, my);         break;
-                case 3: handleWinClick(mx, my);          break;
-                case 4: handlePauseClick(mx, my);        break;
-                case 5: handleSettingsClick(mx, my);     break;
+                    switch (currentScreen) {
+                    case 0: handleMenuClick(mx, my);         break;
+                    case 1: handleColorSelectClick(mx, my);  break;
+                    case 2: handleGameClick(mx, my);         break;
+                    case 3: handleWinClick(mx, my);          break;
+                    case 4: handlePauseClick(mx, my);        break;
+                    case 5: handleSettingsClick(mx, my);     break;
+                    }
                 }
             }
         }
